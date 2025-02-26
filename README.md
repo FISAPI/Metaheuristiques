@@ -1,2 +1,2 @@
 # Metaheuristiques
-L’objectif de ce travail est de compléter l’initiation aux notions abordées pendant les séances de cours du module autour de l’intérêt d’utiliser des heuristiques et/ou des métaheuristiques lorsque le problème à résoudre est “difficile”.
+The aim of this work is to complete the introduction to the concepts covered during the module's course sessions on the value of using heuristics and/or metaheuristics when the problem to be solved is ‘difficult’.
