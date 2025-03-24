@@ -50,9 +50,9 @@ void SCPInstance::print() const {
 
     cout << "\nSous-ensembles (indices des éléments couverts) :\n";
     for (size_t j = 0; j < subsets.size(); ++j) {
-        cout << "Sous-ensemble " << j + 1 << " : ";
+        cout << "Sous-ensemble " << j << " : ";
         for (int element : subsets[j]) {
-            cout << element + 1 << " "; // Affichage indexé à 1
+            cout << element << " "; // Affichage indexé à 1
         }
         cout << endl;
     }
