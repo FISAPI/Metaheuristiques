@@ -14,6 +14,9 @@ bool SCPInstance::loadFromFile(const string& filename) {
     // Lecture du nombre d'éléments et de sous-ensembles
     file >> num_elements >> num_subsets;
 
+    cout << "Nombre d'éléments : " << num_elements << endl;
+    cout << "Nombre de sous-ensembles : " << num_subsets << endl;
+
     // Lecture des coûts des sous-ensembles
     costs.resize(num_subsets);
     for (int j = 0; j < num_subsets; ++j) {
@@ -29,7 +32,7 @@ bool SCPInstance::loadFromFile(const string& filename) {
         subsets[j].resize(num_elements_in_subset);
         for (int k = 0; k < num_elements_in_subset; ++k) {
             file >> subsets[j][k];
-            subsets[j][k]--; // Ajustement (index OR-Library commence à 1)
+//            subsets[j][k]--; // Ajustement (index OR-Library commence à 1)
         }
     }
 
@@ -50,10 +53,10 @@ void SCPInstance::print() const {
 
     cout << "\nSous-ensembles (indices des éléments couverts) :\n";
     for (size_t j = 0; j < subsets.size(); ++j) {
-        cout << "Sous-ensemble " << j << " : ";
-        for (int element : subsets[j]) {
-            cout << element << " "; // Affichage indexé à 1
-        }
-        cout << endl;
+    		cout << "Sous-ensemble " << j << " : ";
+    		for (int element : subsets[j]) {
+        		cout << element << " ";
+    		}
+    		cout << endl;
     }
 }
