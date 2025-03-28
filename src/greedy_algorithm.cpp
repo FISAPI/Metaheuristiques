@@ -1,13 +1,14 @@
-#include "algorithme_glouton.h"
+#include "greedy_algorithm.h"
 #include <iostream>
 #include <set>
+#include <vector>
 #include <limits>
 #include <algorithm>
 #include <numeric>
 
 using namespace std;
 
-// Constructeur
+// Constructor
 GreedySetCover::GreedySetCover(int universeSize, int numSubsets, const vector<vector<int>> &cover_matrix, const vector<double> &costs) {
     this->universeSize = universeSize;
     this->numSubsets = numSubsets;
@@ -15,41 +16,42 @@ GreedySetCover::GreedySetCover(int universeSize, int numSubsets, const vector<ve
     this->costs = costs;
 }
 
-// Algorithme glouton pour la couverture d'ensemble
+// Greedy algorithm for the set cover problem
 vector<int> GreedySetCover::solve() {
-    set<int> covered;  // Ensemble des éléments déjà couverts
-    vector<int> solution;  // Indices des sous-ensembles sélectionnés
+    set<int> covered;  // Set of already covered elements
+    vector<int> solution;  // Indices of the selected subsets
 
     while (covered.size() < universeSize) {
         int bestIndex = -1;
-        double bestRatio = numeric_limits<double>::max();
+        double bestRatio = -1.0;  // We maximize, so we initialize with a very low value
 
-        // Parcourir les sous-ensembles pour trouver le meilleur
+        // Find the best subset
         for (int j = 0; j < numSubsets; j++) {
             int uncoveredCount = 0;
 
-            // Vérifier combien d'éléments du sous-ensemble j ne sont pas encore couverts
+            // Count how many elements in this subset are not yet covered
             for (int i = 0; i < universeSize; i++) {
                 if (cover_matrix[i][j] == 1 && covered.find(i) == covered.end()) {
                     uncoveredCount++;
                 }
             }
 
-            // Sélectionner le sous-ensemble qui minimise le coût par élément nouvellement couvert
+            // Choose the subset that maximizes |S_j \ Covered| / c_j
             if (uncoveredCount > 0) {
-                double ratio = costs[j] / uncoveredCount;
-                if (ratio < bestRatio) {
+                double ratio = uncoveredCount / costs[j];  // Corrected formula
+                if (ratio > bestRatio) {  // Maximization
                     bestRatio = ratio;
                     bestIndex = j;
                 }
             }
         }
-        if (bestIndex == -1) break; // Aucun sous-ensemble ne peut améliorer la couverture
 
-        // Ajouter le sous-ensemble sélectionné à la solution
+        if (bestIndex == -1) break; // No subset can improve the coverage
+
+        // Add the selected subset to the solution
         solution.push_back(bestIndex);
 
-        // Marquer ses éléments comme couverts
+        // Mark its elements as covered
         for (int i = 0; i < universeSize; i++) {
             if (cover_matrix[i][bestIndex] == 1) {
                 covered.insert(i);
@@ -59,23 +61,25 @@ vector<int> GreedySetCover::solve() {
     return solution;
 }
 
-// Affichage de la solution
+// Display the solution
 void GreedySetCover::printSolution(const vector<int> &solution) {
-    cout << "Solution trouvée : ";
+    cout << "Solution found using the greedy algorithm: ";
     for (int idx : solution) {
         cout << idx << " ";
     }
-    cout << "\nSous-ensembles sélectionnés et leurs éléments :\n";
+    cout << "\nSelected subsets and their elements:\n";
 
+    double totalCost = 0.0;
     for (int idx : solution) {
-        cout << "Sous-ensemble " << idx << " : { ";
+        cout << "Subset " << idx << " : { ";
         for (int i = 0; i < universeSize; i++) {
             if (cover_matrix[i][idx] == 1) {
                 cout << i << " ";
             }
         }
-        cout << "} (Coût: " << costs[idx] << ")\n";
+        cout << "} (Cost: " << costs[idx] << ")\n";
+        totalCost += costs[idx];  // Compute the total cost of the solution
     }
 
-	cout << "Coût total de la solution : " << accumulate(costs.begin(), costs.end(), 0.0) << endl;
+    cout << "Total solution cost: " << totalCost << endl;
 }

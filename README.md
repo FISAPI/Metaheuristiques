@@ -4,13 +4,13 @@ The aim of this work is to complete the introduction to the concepts covered dur
 
 # Execution : 
 ```bash
-g++ -o scp_solver src/main.cpp src/retrieving_data.cpp src/algorithme_glouton.cpp
+g++ -o scp_solver src/*.cpp
 
 ```
 Then execute the run file scp_solver with the following options : 
 
 ```bash
-./scp_solver --path/filename [--glouton]      
+./scp_solver --path/filename [--greedy|--dualfitting]      
 ```
 
 ### Explanation of the problem : 
@@ -27,7 +27,7 @@ In the document scpXX.txt, we have the following information :
 ## Greedy algorithm (algorithme_glouton.cpp):
 The algorithm is based on the following steps :
 - We sort the columns by cost.
-- We take the column with the lowest cost and we add it to the solution.
+- We take the column with the lowest cost, and we add it to the solution.
 - We remove the column from the matrix.
 - We remove the rows that are covered by the column.
 - We repeat the process until all the rows are covered.
