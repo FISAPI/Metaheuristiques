@@ -7,17 +7,30 @@ The aim of this work is to complete the introduction to the concepts covered dur
 g++ -o scp_solver src/main.cpp src/retrieving_data.cpp src/algorithme_glouton.cpp
 
 ```
-Ensuite, execution du fichier executable scp_solver avec les options suivantes : 
+Then execute the run file scp_solver with the following options : 
 
 ```bash
-./scp_solver --glouton      
+./scp_solver --path/filename [--glouton]      
 ```
 
+### Explanation of the problem : 
+We want to create a matrix with a certain amount of line and column. Then we want to cover all the lines using column minimising the cost.
 
-### Question pour WILBAUT : 
-Le fichier scp4x.txt fonctionne comment parce que je ne comprends pas le nombre d'éléments.
+In the document scpXX.txt, we have the following information :
+- The first line contains the number of rows and columns of the matrix.
+- The second line contains the cost of each column.
+- The following lines contain the number of elements in each row.
+- The following lines contain the elements of the row.
 
-3 executables : 
-scp_solver200.exe : fichier normal avec 200 elements et 1000 sous-ensembles -> Fichier de base, mais il y a 1000 éléments ?
-scp_solverinv.exe : fichier inversé avec 1000 elements et 200 sous-ensembles -> il y a 1000 déclaration de coût, donc ça fonctionne pas
-scp_solver1000.exe : fichier normal avec 1000 elements et 1000 sous-ensembles ->  On doit modifier le fichier de base ?
+
+### Explanation of the algorithm :
+## Greedy algorithm (algorithme_glouton.cpp):
+The algorithm is based on the following steps :
+- We sort the columns by cost.
+- We take the column with the lowest cost and we add it to the solution.
+- We remove the column from the matrix.
+- We remove the rows that are covered by the column.
+- We repeat the process until all the rows are covered.
+- We return the solution.
+- The complexity of the algorithm is O(n^2) where n is the number of rows.
+- The algorithm is not optimal but it is fast.

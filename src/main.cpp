@@ -11,8 +11,29 @@ int main(int argc, char* argv[]) {
     SetConsoleOutputCP(CP_UTF8);
     setvbuf(stdout, nullptr, _IOFBF, 1000);
 
+    string filename = "";
+    bool modeGlouton = false;
+
+    // Vérification des arguments de ligne de commande
+    for (int i = 1; i < argc; i++) {
+        string arg = argv[i];
+
+        if (arg.rfind("--", 0) == 0) { // Vérifie si l'argument commence par "--"
+            if (arg == "--glouton") {
+                modeGlouton = true;
+            } else {
+                filename = arg.substr(2); // Retire "--" pour récupérer le nom du fichier
+            }
+        }
+    }
+
+    // Vérification de la validité du fichier
+    if (filename.empty()) {
+        cerr << "Erreur: Aucun fichier spécifié. Utilisation : ./scp_solver --nom_du_fichier [--glouton]" << endl;
+        return 1;
+    }
+
     SCPInstance instance;
-    string filename = "datas/scp42.txt"; // Chemin du fichier
 
     if (!instance.loadFromFile(filename)) {
         cout << "Erreur lors du chargement des données.\n";
@@ -20,25 +41,13 @@ int main(int argc, char* argv[]) {
     }
 
     cout << "Données chargées avec succès !\n";
-    // instance.print();
-
-    // Vérifier si le mode glouton est activé
-    bool modeGlouton = (argc > 1 && string(argv[1]) == "--glouton");
 
     if (modeGlouton) {
         cout << "Exécution de l'algorithme glouton avec les données chargées...\n";
 
         // Récupération des données depuis `instance`
         int universeSize = instance.getNumElements();  // Nombre total d'éléments
-        // vector<vector<int>> subsets = instance.getSubsets(); // Liste des sous-ensembles
         vector<double> costs(instance.getCosts().begin(), instance.getCosts().end()); // Conversion en `double`
-
-        // cout << "Nombre total de sous-ensembles chargés : " << instance.getNumSubsets() << endl;
-
-        // // Instanciation et exécution de l'algorithme glouton
-        // GreedySetCover solver(universeSize, subsets, costs);
-        // vector<int> solution = solver.solve();
-        // solver.printSolution(solution);
 
         // Instanciation et exécution de l'algorithme glouton
         GreedySetCover solver(instance.getNumElements(), instance.getNumSubsets(), instance.getCoverMatrix(), instance.getCosts());
