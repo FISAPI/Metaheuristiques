@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     }
 
     cout << "Données chargées avec succès !\n";
-    instance.print();
+    // instance.print();
 
     // Vérifier si le mode glouton est activé
     bool modeGlouton = (argc > 1 && string(argv[1]) == "--glouton");
@@ -30,13 +30,18 @@ int main(int argc, char* argv[]) {
 
         // Récupération des données depuis `instance`
         int universeSize = instance.getNumElements();  // Nombre total d'éléments
-        vector<vector<int>> subsets = instance.getSubsets(); // Liste des sous-ensembles
+        // vector<vector<int>> subsets = instance.getSubsets(); // Liste des sous-ensembles
         vector<double> costs(instance.getCosts().begin(), instance.getCosts().end()); // Conversion en `double`
 
-        cout << "Nombre total de sous-ensembles chargés : " << instance.getNumSubsets() << endl;
+        // cout << "Nombre total de sous-ensembles chargés : " << instance.getNumSubsets() << endl;
+
+        // // Instanciation et exécution de l'algorithme glouton
+        // GreedySetCover solver(universeSize, subsets, costs);
+        // vector<int> solution = solver.solve();
+        // solver.printSolution(solution);
 
         // Instanciation et exécution de l'algorithme glouton
-        GreedySetCover solver(universeSize, subsets, costs);
+        GreedySetCover solver(instance.getNumElements(), instance.getNumSubsets(), instance.getCoverMatrix(), instance.getCosts());
         vector<int> solution = solver.solve();
         solver.printSolution(solution);
     }

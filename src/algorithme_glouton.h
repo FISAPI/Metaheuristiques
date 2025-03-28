@@ -5,20 +5,15 @@
 
 class GreedySetCover {
 private:
-    int universeSize;
-    std::vector<std::vector<int>> subsets;
-    std::vector<double> costs;
+    int universeSize; // Nombre total d'éléments
+    int numSubsets;   // Nombre de sous-ensembles
+    std::vector<std::vector<int>> cover_matrix; // Matrice binaire de couverture
+    std::vector<double> costs; // Coûts des sous-ensembles
 
 public:
-    // Constructeur
-    GreedySetCover(int universeSize, const std::vector<std::vector<int>> &subsets, const std::vector<double> &costs);
-
-    // Fonction pour exécuter l'algorithme
+    GreedySetCover(int universeSize, int numSubsets, const std::vector<std::vector<int>> &cover_matrix, const std::vector<double> &costs);
     std::vector<int> solve();
-
-    // Afficher la solution
     void printSolution(const std::vector<int> &solution);
 };
 
-#endif // ALGORITHME_GLOUTON_H
-
+#endif
