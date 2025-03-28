@@ -1,4 +1,4 @@
-#include "algorithme_glouton.h"
+#include "greedy_algorithm.h"
 #include <iostream>
 #include <set>
 #include <vector>
@@ -8,7 +8,7 @@
 
 using namespace std;
 
-// Constructeur
+// Constructor
 GreedySetCover::GreedySetCover(int universeSize, int numSubsets, const vector<vector<int>> &cover_matrix, const vector<double> &costs) {
     this->universeSize = universeSize;
     this->numSubsets = numSubsets;
@@ -16,42 +16,42 @@ GreedySetCover::GreedySetCover(int universeSize, int numSubsets, const vector<ve
     this->costs = costs;
 }
 
-// Algorithme glouton pour la couverture d'ensemble
+// Greedy algorithm for the set cover problem
 vector<int> GreedySetCover::solve() {
-    set<int> covered;  // Éléments déjà couverts
-    vector<int> solution;  // Indices des sous-ensembles sélectionnés
+    set<int> covered;  // Set of already covered elements
+    vector<int> solution;  // Indices of the selected subsets
 
     while (covered.size() < universeSize) {
         int bestIndex = -1;
-        double bestRatio = -1.0;  // On maximise, donc initialisation à une valeur très basse
+        double bestRatio = -1.0;  // We maximize, so we initialize with a very low value
 
-        // Recherche du meilleur sous-ensemble
+        // Find the best subset
         for (int j = 0; j < numSubsets; j++) {
             int uncoveredCount = 0;
 
-            // Compter le nombre d'éléments non couverts dans ce sous-ensemble
+            // Count how many elements in this subset are not yet covered
             for (int i = 0; i < universeSize; i++) {
                 if (cover_matrix[i][j] == 1 && covered.find(i) == covered.end()) {
                     uncoveredCount++;
                 }
             }
 
-            // Choisir le sous-ensemble qui maximise |S_j \ Couvert| / c_j
+            // Choose the subset that maximizes |S_j \ Covered| / c_j
             if (uncoveredCount > 0) {
-                double ratio = uncoveredCount / costs[j];  // Correction ici
-                if (ratio > bestRatio) {  // On maximise
+                double ratio = uncoveredCount / costs[j];  // Corrected formula
+                if (ratio > bestRatio) {  // Maximization
                     bestRatio = ratio;
                     bestIndex = j;
                 }
             }
         }
 
-        if (bestIndex == -1) break; // Aucun sous-ensemble ne peut améliorer la couverture
+        if (bestIndex == -1) break; // No subset can improve the coverage
 
-        // Ajouter le sous-ensemble sélectionné à la solution
+        // Add the selected subset to the solution
         solution.push_back(bestIndex);
 
-        // Marquer ses éléments comme couverts
+        // Mark its elements as covered
         for (int i = 0; i < universeSize; i++) {
             if (cover_matrix[i][bestIndex] == 1) {
                 covered.insert(i);
@@ -61,25 +61,25 @@ vector<int> GreedySetCover::solve() {
     return solution;
 }
 
-// Affichage de la solution
+// Display the solution
 void GreedySetCover::printSolution(const vector<int> &solution) {
-    cout << "Solution trouvée avec l'algorithme glouton : ";
+    cout << "Solution found using the greedy algorithm: ";
     for (int idx : solution) {
         cout << idx << " ";
     }
-    cout << "\nSous-ensembles sélectionnés et leurs éléments :\n";
+    cout << "\nSelected subsets and their elements:\n";
 
     double totalCost = 0.0;
     for (int idx : solution) {
-        cout << "Sous-ensemble " << idx << " : { ";
+        cout << "Subset " << idx << " : { ";
         for (int i = 0; i < universeSize; i++) {
             if (cover_matrix[i][idx] == 1) {
                 cout << i << " ";
             }
         }
-        cout << "} (Coût: " << costs[idx] << ")\n";
-        totalCost += costs[idx];  // Calcul du coût total de la solution
+        cout << "} (Cost: " << costs[idx] << ")\n";
+        totalCost += costs[idx];  // Compute the total cost of the solution
     }
 
-    cout << "Coût total de la solution : " << totalCost << endl;
+    cout << "Total solution cost: " << totalCost << endl;
 }

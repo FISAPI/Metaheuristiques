@@ -4,13 +4,13 @@ The aim of this work is to complete the introduction to the concepts covered dur
 
 # Execution : 
 ```bash
-g++ -o scp_solver src/main.cpp src/retrieving_data.cpp src/algorithme_glouton.cpp
+g++ -o scp_solver src/main.cpp src/retrieving_data.cpp src/greedy_algorithm.cpp
 
 ```
 Then execute the run file scp_solver with the following options : 
 
 ```bash
-./scp_solver --path/filename [--glouton]      
+./scp_solver --path/filename [--greedy|--dualfitting]      
 ```
 
 ### Explanation of the problem : 

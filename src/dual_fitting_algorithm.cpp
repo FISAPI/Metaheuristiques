@@ -1,4 +1,4 @@
-#include "algorithm_dual_fitting.h"
+#include "dual_fitting_algorithm.h"
 #include <iostream>
 #include <set>
 #include <vector>
@@ -8,24 +8,24 @@
 
 using namespace std;
 
-// Constructeur
+// Constructor
 DualFittingSetCover::DualFittingSetCover(int universeSize, const vector<vector<int>> &cover_matrix, const vector<double> &costs) {
     this->universeSize = universeSize;
-    this->cover_matrix = cover_matrix;  // Utilisation de cover_matrix directement
+    this->cover_matrix = cover_matrix;  // Directly using cover_matrix
     this->costs = costs;
 }
 
-// Algorithme d'approximation par Dual Fitting
+// Approximation algorithm using Dual Fitting
 vector<int> DualFittingSetCover::solve() {
-    vector<double> y(universeSize, 0.0); // Poids duals
-    set<int> covered;  // Éléments déjà couverts
-    vector<int> solution;  // Indices des sous-ensembles sélectionnés
+    vector<double> y(universeSize, 0.0); // Dual weights
+    set<int> covered;  // Elements that are already covered
+    vector<int> solution;  // Indices of selected subsets
 
     while (covered.size() < universeSize) {
         int bestIndex = -1;
         double bestRatio = numeric_limits<double>::max();
 
-        // Sélection du sous-ensemble avec le meilleur ratio coût / éléments non couverts
+        // Select the subset with the best cost-to-uncovered-elements ratio
         for (int j = 0; j < cover_matrix[0].size(); j++) {
             int uncoveredCount = 0;
 
@@ -44,16 +44,16 @@ vector<int> DualFittingSetCover::solve() {
             }
         }
 
-        if (bestIndex == -1) break; // Aucun sous-ensemble utile n'est trouvé
+        if (bestIndex == -1) break; // No useful subset found
 
-        // Ajouter le meilleur sous-ensemble à la solution
+        // Add the best subset to the solution
         solution.push_back(bestIndex);
 
-        // Marquer les éléments couverts par ce sous-ensemble
+        // Mark the elements covered by this subset
         for (int i = 0; i < universeSize; i++) {
             if (cover_matrix[i][bestIndex] == 1) {
                 covered.insert(i);
-                y[i] = max(y[i], costs[bestIndex] / universeSize);  // Mise à jour des poids
+                y[i] = max(y[i], costs[bestIndex] / universeSize);  // Update dual weights
             }
         }
     }
@@ -61,24 +61,24 @@ vector<int> DualFittingSetCover::solve() {
     return solution;
 }
 
-// Affichage de la solution
+// Display the solution
 void DualFittingSetCover::printSolution(const vector<int> &solution) {
-    cout << "Solution trouvée avec Dual Fitting : ";
+    cout << "Solution found using Dual Fitting: ";
     for (int idx : solution) {
         cout << idx << " ";
     }
-    cout << "\nSous-ensembles sélectionnés et leurs éléments :\n";
+    cout << "\nSelected subsets and their elements:\n";
 
     double totalCost = 0.0;
     for (int idx : solution) {
-        cout << "Sous-ensemble " << idx << " : { ";
+        cout << "Subset " << idx << " : { ";
         for (int i = 0; i < universeSize; i++) {
             if (cover_matrix[i][idx] == 1) {
                 cout << i << " ";
             }
         }
-        cout << "} (Coût: " << costs[idx] << ")\n";
-        totalCost += costs[idx];  // Calcul du coût total de la solution
+        cout << "} (Cost: " << costs[idx] << ")\n";
+        totalCost += costs[idx];  // Compute the total cost of the solution
     }
-    cout << "Coût total de la solution : " << totalCost << endl;
+    cout << "Total cost of the solution: " << totalCost << endl;
 }

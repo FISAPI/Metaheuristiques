@@ -2,86 +2,88 @@
 #include <Windows.h>
 #include <cstdio>
 #include "retrieving_data.h"
-#include "algorithme_glouton.h"
-#include "algorithm_dual_fitting.h"
+#include "greedy_algorithm.h"
+#include "dual_fitting_algorithm.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
+    // Ensure correct usage
     if (argc < 3) {
-        cerr << "Usage: ./scp_solver <fichier_scp> --glouton | --dualfitting" << endl;
+        cerr << "Usage: ./scp_solver <scp_file> --greedy | --dualfitting" << endl;
         return 1;
     }
-    // Activer l'UTF-8 pour la console Windows
+
+    // Enable UTF-8 output for Windows console
     SetConsoleOutputCP(CP_UTF8);
     setvbuf(stdout, nullptr, _IOFBF, 1000);
 
     string filename = "";
     string method = "";
 
+    // Parse command-line arguments
     for (int i = 1; i < argc; i++) {
         string arg = argv[i];
 
-        if (arg.rfind("--", 0) == 0) { // Vérifie si l'argument commence par "--"
+        if (arg.rfind("--", 0) == 0) { // Check if the argument starts with "--"
             if (i == 1) {
-                filename = arg.substr(2); // Retire "--" pour récupérer le nom du fichier
+                filename = arg.substr(2); // Remove "--" to get the filename
             } else {
-                method = arg.substr(2); // Retire "--" pour récupérer le nom du fichier
+                method = arg.substr(2); // Remove "--" to get the method
             }
         }
     }
 
-    // Vérification de la validité du fichier
+    // Validate filename
     if (filename.empty()) {
-        cerr << "Erreur: Aucun fichier spécifié. Utilisation : ./scp_solver --nom_du_fichier [--glouton]" << endl;
+        cerr << "Error: No file specified. Usage: ./scp_solver --file_name [--greedy]" << endl;
         return 1;
     }
 
     SCPInstance instance;
 
+    // Load data from the specified file
     if (!instance.loadFromFile(filename)) {
-        cout << "Erreur lors du chargement des données.\n";
+        cout << "Error loading data.\n";
         return 1;
     }
 
-    cout << "Données chargées avec succès !\n";
+    cout << "Data successfully loaded!\n";
 
     if (!instance.loadFromFile(filename)) {
-        cerr << "Erreur lors de la lecture du fichier : " << filename << endl;
+        cerr << "Error reading the file: " << filename << endl;
         return 1;
     }
 
     vector<int> solution;
 
-    if (method == "glouton") {
-        cout << "Exécution de l'algorithme glouton avec les données chargées...\n";
+    // Execute the selected algorithm
+    if (method == "greedy") {
+        cout << "Running the greedy algorithm with the loaded data...\n";
 
-        // Récupération des données depuis `instance`
-        int universeSize = instance.getNumElements();  // Nombre total d'éléments
-        // vector<double> costs(instance.getCosts().begin(), instance.getCosts().end()); // Conversion en `double`
+        // Retrieve data from `instance`
+        int universeSize = instance.getNumElements();  // Total number of elements
 
-        // Instanciation et exécution de l'algorithme glouton
+        // Instantiate and execute the greedy algorithm
         GreedySetCover solver(instance.getNumElements(), instance.getNumSubsets(), instance.getCoverMatrix(), instance.getCosts());
         vector<int> solution = solver.solve();
         solver.printSolution(solution);
     }
     else if (method == "dualfitting") {
-        cout << "Exécution de l'approximation dual_fitting avec les données chargées...\n";
+        cout << "Running the dual fitting approximation with the loaded data...\n";
 
-        // Récupération des données depuis `instance`
-        int universeSize = instance.getNumElements();  // Nombre total d'éléments
-        // vector<double> costs(instance.getCosts().begin(), instance.getCosts().end()); // Conversion en `double`
+        // Retrieve data from `instance`
+        int universeSize = instance.getNumElements();  // Total number of elements
+
+        // Instantiate and execute the dual fitting algorithm
         DualFittingSetCover solver(instance.getNumElements(), instance.getCoverMatrix(), instance.getCosts());
         solution = solver.solve();
         solver.printSolution(solution);
     }
     else {
-        cerr << "Méthode inconnue. Utilisez --glouton ou --dualfitting" << endl;
+        cerr << "Unknown method. Use --greedy or --dualfitting" << endl;
         return 1;
     }
-
-
-
 
     return 0;
 }
