@@ -1,4 +1,4 @@
-#include "algorithme_glouton.h"
+#include "algorithm_dual_fitting.h"
 #include <iostream>
 #include <set>
 #include <vector>
@@ -9,61 +9,61 @@
 using namespace std;
 
 // Constructeur
-GreedySetCover::GreedySetCover(int universeSize, int numSubsets, const vector<vector<int>> &cover_matrix, const vector<double> &costs) {
+DualFittingSetCover::DualFittingSetCover(int universeSize, const vector<vector<int>> &cover_matrix, const vector<double> &costs) {
     this->universeSize = universeSize;
-    this->numSubsets = numSubsets;
-    this->cover_matrix = cover_matrix;
+    this->cover_matrix = cover_matrix;  // Utilisation de cover_matrix directement
     this->costs = costs;
 }
 
-// Algorithme glouton pour la couverture d'ensemble
-vector<int> GreedySetCover::solve() {
+// Algorithme d'approximation par Dual Fitting
+vector<int> DualFittingSetCover::solve() {
+    vector<double> y(universeSize, 0.0); // Poids duals
     set<int> covered;  // Éléments déjà couverts
     vector<int> solution;  // Indices des sous-ensembles sélectionnés
 
     while (covered.size() < universeSize) {
         int bestIndex = -1;
-        double bestRatio = -1.0;  // On maximise, donc initialisation à une valeur très basse
+        double bestRatio = numeric_limits<double>::max();
 
-        // Recherche du meilleur sous-ensemble
-        for (int j = 0; j < numSubsets; j++) {
+        // Sélection du sous-ensemble avec le meilleur ratio coût / éléments non couverts
+        for (int j = 0; j < cover_matrix[0].size(); j++) {
             int uncoveredCount = 0;
 
-            // Compter le nombre d'éléments non couverts dans ce sous-ensemble
             for (int i = 0; i < universeSize; i++) {
                 if (cover_matrix[i][j] == 1 && covered.find(i) == covered.end()) {
                     uncoveredCount++;
                 }
             }
 
-            // Choisir le sous-ensemble qui maximise |S_j \ Couvert| / c_j
             if (uncoveredCount > 0) {
-                double ratio = uncoveredCount / costs[j];  // Correction ici
-                if (ratio > bestRatio) {  // On maximise
+                double ratio = costs[j] / uncoveredCount;
+                if (ratio < bestRatio) {
                     bestRatio = ratio;
                     bestIndex = j;
                 }
             }
         }
 
-        if (bestIndex == -1) break; // Aucun sous-ensemble ne peut améliorer la couverture
+        if (bestIndex == -1) break; // Aucun sous-ensemble utile n'est trouvé
 
-        // Ajouter le sous-ensemble sélectionné à la solution
+        // Ajouter le meilleur sous-ensemble à la solution
         solution.push_back(bestIndex);
 
-        // Marquer ses éléments comme couverts
+        // Marquer les éléments couverts par ce sous-ensemble
         for (int i = 0; i < universeSize; i++) {
             if (cover_matrix[i][bestIndex] == 1) {
                 covered.insert(i);
+                y[i] = max(y[i], costs[bestIndex] / universeSize);  // Mise à jour des poids
             }
         }
     }
+
     return solution;
 }
 
 // Affichage de la solution
-void GreedySetCover::printSolution(const vector<int> &solution) {
-    cout << "Solution trouvée avec l'algorithme glouton : ";
+void DualFittingSetCover::printSolution(const vector<int> &solution) {
+    cout << "Solution trouvée avec Dual Fitting : ";
     for (int idx : solution) {
         cout << idx << " ";
     }
@@ -80,6 +80,5 @@ void GreedySetCover::printSolution(const vector<int> &solution) {
         cout << "} (Coût: " << costs[idx] << ")\n";
         totalCost += costs[idx];  // Calcul du coût total de la solution
     }
-
     cout << "Coût total de la solution : " << totalCost << endl;
 }
