@@ -4,13 +4,15 @@
 #include "retrieving_data.h"
 #include "greedy_algorithm.h"
 #include "dual_fitting_algorithm.h"
+#include "metaheuristic.h"
+#include "genetic_algorithm.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
     // Ensure correct usage
     if (argc < 3) {
-        cerr << "Usage: ./scp_solver <scp_file> --greedy | --dualfitting" << endl;
+        cerr << "Usage: ./scp_solver <scp_file> --greedy | --dualfitting | --metaheuristic | --genetic" << endl;
         return 1;
     }
 
@@ -80,8 +82,30 @@ int main(int argc, char* argv[]) {
         solution = solver.solve();
         solver.printSolution(solution);
     }
+    else if (method == "metaheuristic") {
+        cout << "Running the metaheuristic algorithm with the loaded data...\n";
+
+        // Retrieve data from `instance`
+        int universeSize = instance.getNumElements();  // Total number of elements
+
+        // Instantiate and execute the metaheuristic algorithm
+        Metaheuristic solver(instance.getNumElements(), instance.getNumSubsets(), instance.getCoverMatrix(), instance.getCosts());
+        solution = solver.solve();
+        solver.printSolution(solution);
+    }
+    else if (method == "genetic") {
+        cout << "Running the genetic algorithm with the loaded data...\n";
+
+        // Retrieve data from `instance`
+        int universeSize = instance.getNumElements();  // Total number of elements
+
+        // Instantiate and execute the genetic algorithm
+        GeneticSetCover solver(instance.getNumElements(), instance.getNumSubsets(), instance.getCoverMatrix(), instance.getCosts());
+        solution = solver.solve();
+        solver.printSolution(solution);
+    }
     else {
-        cerr << "Unknown method. Use --greedy or --dualfitting" << endl;
+        cerr << "Unknown method. Use --greedy, --dualfitting, --metaheuristic or --genetic" << endl;
         return 1;
     }
 

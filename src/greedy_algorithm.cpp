@@ -18,48 +18,68 @@ GreedySetCover::GreedySetCover(int universeSize, int numSubsets, const vector<ve
 
 // Greedy algorithm for the set cover problem
 vector<int> GreedySetCover::solve() {
-    set<int> covered;  // Set of already covered elements
-    vector<int> solution;  // Indices of the selected subsets
+    set<int> covered;               // Set of already covered elements
+    vector<int> solution;           // Indices of selected subsets
+    vector<bool> subsetVisited(numSubsets, false); // Track if each subset was examined
 
     while (covered.size() < universeSize) {
         int bestIndex = -1;
-        double bestRatio = -1.0;  // We maximize, so we initialize with a very low value
+        double bestRatio = -1.0;  // Maximize uncoveredCount / cost
 
-        // Find the best subset
         for (int j = 0; j < numSubsets; j++) {
+            subsetVisited[j] = true;
+
             int uncoveredCount = 0;
 
-            // Count how many elements in this subset are not yet covered
             for (int i = 0; i < universeSize; i++) {
                 if (cover_matrix[i][j] == 1 && covered.find(i) == covered.end()) {
                     uncoveredCount++;
                 }
             }
 
-            // Choose the subset that maximizes |S_j \ Covered| / c_j
             if (uncoveredCount > 0) {
-                double ratio = uncoveredCount / costs[j];  // Corrected formula
-                if (ratio > bestRatio) {  // Maximization
+                double ratio = uncoveredCount / costs[j];
+                if (ratio > bestRatio) {
                     bestRatio = ratio;
                     bestIndex = j;
                 }
             }
         }
 
-        if (bestIndex == -1) break; // No subset can improve the coverage
+        if (bestIndex == -1) {
+            cout << "⚠️ Warning: No useful subset found to improve coverage." << endl;
+            break;
+        }
 
-        // Add the selected subset to the solution
         solution.push_back(bestIndex);
 
-        // Mark its elements as covered
         for (int i = 0; i < universeSize; i++) {
             if (cover_matrix[i][bestIndex] == 1) {
                 covered.insert(i);
             }
         }
     }
+
+    // Final checks and diagnostics
+    int visitedCount = count(subsetVisited.begin(), subsetVisited.end(), true);
+    cout << "\nℹ️ Subsets evaluated during solving: " << visitedCount << " / " << numSubsets << endl;
+
+    cout << "✅ Elements covered: " << covered.size() << " / " << universeSize << endl;
+
+    if (covered.size() < universeSize) {
+        cout << "❌ Warning: Not all elements were covered!" << endl;
+        cout << "Missing elements: ";
+        for (int i = 0; i < universeSize; ++i) {
+            if (covered.find(i) == covered.end()) {
+                cout << i << " ";
+            }
+        }
+        cout << endl;
+    }
+
     return solution;
 }
+
 
 // Display the solution
 void GreedySetCover::printSolution(const vector<int> &solution) {
