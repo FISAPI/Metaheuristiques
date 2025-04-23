@@ -7,4 +7,7 @@ add_executable(scp_solver
         src/main.cpp
         src/retrieving_data.cpp
         src/algorithme_glouton.cpp
+        test/test_local_search.cpp
+        src/local_search.cpp
+        src/feasibility_check.cpp
 )
