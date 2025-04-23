@@ -39,6 +39,12 @@ int main(int argc, char* argv[]) {
     	else if (arg == "--dualfitting") {
         	method = "dualfitting";
     	}
+        else if (arg == "--genetic") {
+        	method = "genetic";
+    	}
+        else if (arg == "--metaheuristic") {
+        	method = "metaheuristic";
+    	}
     	else if (i == 1) {
         	filename = arg;
     	}
